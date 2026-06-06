@@ -1,0 +1,10 @@
+/* WALLEXA OVERLAY — ChatGPT‑Style UI (CSS placeholder) */
+/* Full animated ChatGPT‑level styling will be injected next */
+
+#walletxa-chat-overlay,
+#wallexa-chat-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  pointer-events: none;
+}

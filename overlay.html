@@ -1,0 +1,57 @@
+<!-- WALLEXA OVERLAY — ChatGPT‑Style Side‑Dock Layout -->
+<!-- This file contains the full HTML structure for the ChatGPT-style UI -->
+
+<div id="wallexa-chat-overlay" class="wxa-overlay-root">
+
+  <!-- Sidebar -->
+  <aside class="wxa-sidebar">
+    <div class="wxa-sidebar-top">
+      <div class="wxa-sidebar-logo">WALLEXA AI</div>
+      <button class="wxa-new-chat-btn" id="wxa-new-chat-btn">+ New Chat</button>
+    </div>
+
+    <div class="wxa-sidebar-section-label">Recent</div>
+    <div class="wxa-chat-list" id="wxa-chat-list">
+      <!-- JS will populate recent chats -->
+    </div>
+
+    <div class="wxa-sidebar-footer">
+      <button class="wxa-sidebar-item">Settings</button>
+      <button class="wxa-sidebar-item">Shortcuts</button>
+    </div>
+  </aside>
+
+  <!-- Main Chat Area -->
+  <main class="wxa-chat-main">
+    <header class="wxa-chat-header">
+      <div class="wxa-model-select">
+        <span class="wxa-model-label">Model:</span>
+        <select id="wxa-model-dropdown">
+          <option>WALLEXA‑GPT</option>
+          <option>WALLEXA‑GPT Turbo</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="wxa-chat-content" id="wxa-chat-content">
+      <!-- Messages will be injected here -->
+      <div class="wxa-message bot">
+        <div class="wxa-message-avatar">✦</div>
+        <div class="wxa-message-bubble">
+          Hey! I’m WALLEXA AI. How can I help you today?
+        </div>
+      </div>
+    </section>
+
+    <!-- Input Bar -->
+    <footer class="wxa-input-footer">
+      <textarea 
+        id="wxa-input" 
+        class="wxa-input" 
+        placeholder="Message WALLEXA..."
+      ></textarea>
+      <button id="wxa-send-btn" class="wxa-send-btn">↑</button>
+    </footer>
+  </main>
+
+</div>

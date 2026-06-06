@@ -1,0 +1,81 @@
+/* ── webcam-pixel-grid.css ─────────────────────────────────────────
+   Add these rules to your styles.css (or paste into a <style> tag).
+   The canvas sits fixed behind all WallexAI page content.
+──────────────────────────────────────────────────────────────────── */
+
+/* The WallexAI page must be a positioning context */
+#page-wallexai,
+.wai-page {
+  position: relative;
+  overflow: hidden;
+}
+
+/* The pixel grid canvas — always behind everything */
+.wxa-pixel-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+  opacity: 0.48;
+}
+
+/* Every direct child of the WallexAI page sits above the canvas */
+#page-wallexai > *:not(.wxa-pixel-canvas),
+.wai-page > *:not(.wxa-pixel-canvas) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Optional: soften the canvas with a subtle vignette overlay
+   so the chat UI stays readable */
+#page-wallexai::after,
+.wai-page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(3,3,3,0.76) 0%, rgba(3,3,3,0.3) 30%, transparent 52%),
+    radial-gradient(ellipse 82% 66% at 50% 54%,
+      transparent 28%,
+      rgba(10, 8, 6, 0.5) 100%);
+}
+
+/* ── WallexAI page: make parent containers transparent so canvas shows ── */
+#page-wallexai {
+  background: transparent !important;
+}
+
+/* #main and #pages-container must not block the canvas */
+#page-wallexai.active ~ * { background: transparent; }
+
+/* Make the pixel canvas cover the entire page area */
+#page-wallexai .wxa-pixel-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Vignette sits above canvas but below content */
+#page-wallexai::after {
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(3,3,3,0.76) 0%, rgba(3,3,3,0.3) 30%, transparent 52%),
+    radial-gradient(ellipse 82% 66% at 50% 54%,
+      transparent 28%,
+      rgba(10, 8, 6, 0.5) 100%);
+}
+
+/* All direct children above canvas */
+#page-wallexai > *:not(.wxa-pixel-canvas) {
+  position: relative;
+  z-index: 2;
+}

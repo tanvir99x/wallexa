@@ -1,0 +1,30 @@
+{
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build:wallet-vendor": "esbuild node_modules/@coinbase/wallet-sdk/dist/index.js --bundle --format=esm --platform=browser --outfile=vendor/coinbase-wallet-sdk.js && esbuild node_modules/@walletconnect/ethereum-provider/dist/index.es.js --bundle --format=esm --platform=browser --outfile=vendor/walletconnect-ethereum-provider.js",
+    "start:8081": "PORT=8081 node server.js"
+  },
+  "dependencies": {
+    "@coinbase/cdp-core": "^0.0.109",
+    "@coinbase/cdp-hooks": "^0.0.109",
+    "@coinbase/cdp-sdk": "^1.51.0",
+    "@coinbase/onchainkit": "^1.1.2",
+    "@coinbase/wallet-sdk": "^4.3.6",
+    "@walletconnect/ethereum-provider": "^2.21.1",
+    "clsx": "^2.1.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "motion": "^12.40.0",
+    "node-fetch": "^3.3.2",
+    "openai": "^6.41.0",
+    "permissionless": "^0.2.57",
+    "tailwind-merge": "^3.6.0",
+    "viem": "^2.52.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
+  }
+}

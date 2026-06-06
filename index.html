@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WALLEXA — Premium Web3 Wallet on Base</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="overlay-full.css">
+<link rel="stylesheet" href="webcam-pixel-grid.css">
+</head>
+<body>
+
+<div id="loading-bar"></div>
+<div id="cursor-glow"></div>
+<div id="toast"></div>
+
+<!-- ===== INTRO SCREEN ===== -->
+<div id="intro">
+  <div class="intro-sphere sphere-1"></div>
+  <div class="intro-sphere sphere-2"></div>
+  <div class="intro-sphere sphere-3"></div>
+  <div class="intro-sphere sphere-4"></div>
+  <div class="intro-logo-wrap" id="intro-logo">
+    <div class="xh-logo">
+      <div class="xh-logo-back">WALLEXA</div>
+      <div class="xh-logo-front">WALLEXA</div>
+    </div>
+    <div class="xh-bar-track"><div class="xh-bar-fill"></div></div>
+    <div class="xh-percent" id="xh-pct">0%</div>
+    <p class="intro-tagline">Next-generation Web3 Wallet on Base</p>
+  </div>
+</div>
+
+<!-- ===== CONNECT SCREEN ===== -->
+<div id="connect-screen">
+  <!-- Webcam pixel grid animated background -->
+  <div id="connect-pixel-bg" style="position:absolute;inset:0;z-index:0;overflow:hidden;"></div>
+  <!-- Gradient overlay for card readability -->
+  <div style="position:absolute;inset:0;z-index:1;background:linear-gradient(to bottom,rgba(3,3,3,0.45) 0%,rgba(3,3,3,0.15) 50%,rgba(3,3,3,0.65) 100%);pointer-events:none;"></div>
+
+  <div class="connect-card" style="position:relative;z-index:2;">
+    <div class="connect-logo">W</div>
+    <h2>Connect to WALLEXA</h2>
+    <p>Sign in with your Base wallet to access your portfolio, NFTs, and DeFi tools on Base chain.</p>
+
+    <!-- PRIMARY: Base Wallet -->
+    <button class="base-connect-btn" id="base-connect-btn" onclick="connectBaseWallet()">
+      <div class="base-btn-icon">🔵</div>
+      <div class="base-btn-content">
+        <strong>Connect with Base</strong>
+        <span>Smart wallet — no seed phrase needed</span>
+      </div>
+    </button>
+
+    <!-- SECONDARY: Other wallets -->
+    <button class="other-wallets-toggle" onclick="toggleOtherWallets()" id="toggle-btn">
+      <span>Other wallets</span>
+      <span class="toggle-arrow" id="toggle-arrow">▾</span>
+    </button>
+    <div class="other-wallets" id="other-wallets">
+      <button class="wallet-btn" onclick="connectOtherWallet('MetaMask', event)">
+        <div class="wallet-btn-icon" style="background:rgba(255,123,0,.15);">🦊</div>
+        <div class="wallet-btn-text"><strong>MetaMask</strong><span>Browser extension wallet</span></div>
+        <span class="wallet-btn-arrow">›</span>
+      </button>
+      <button class="wallet-btn" onclick="connectOtherWallet('WalletConnect', event)">
+        <div class="wallet-btn-icon" style="background:rgba(0,176,255,.15);">🔗</div>
+        <div class="wallet-btn-text"><strong>WalletConnect</strong><span>Scan with any compatible wallet</span></div>
+        <span class="wallet-btn-arrow">›</span>
+      </button>
+      <button class="wallet-btn" onclick="connectOtherWallet('Trust Wallet', event)">
+        <div class="wallet-btn-icon" style="background:rgba(51,117,247,.15);">◆</div>
+        <div class="wallet-btn-text"><strong>Trust Wallet</strong><span>Injected or WalletConnect</span></div>
+        <span class="wallet-btn-arrow">›</span>
+      </button>
+      <button class="wallet-btn" onclick="connectOtherWallet('Bitget Wallet', event)">
+        <div class="wallet-btn-icon" style="background:rgba(126,200,164,.15);">◇</div>
+        <div class="wallet-btn-text"><strong>Bitget Wallet</strong><span>Injected EVM wallet</span></div>
+        <span class="wallet-btn-arrow">›</span>
+      </button>
+    </div>
+
+    <div class="chain-badge">
+      <span class="chain-dot"></span>
+      Base Chain — Mainnet
+    </div>
+  </div>
+</div>
+
+<!-- ══ AI COMMAND PANEL — outside connect card, sibling of #app ══ -->
+<div id="ai-panel">
+  <div class="ai-panel-top">
+    <span class="ai-panel-title">⬡ WALLEXA AI — Base Chain Assistant</span>
+    <button class="ai-panel-close" onclick="toggleAI()">✕</button>
+  </div>
+  <div class="ai-chat-log" id="ai-chat-log">
+    <div class="ai-msg bot">Hey! I'm your Base chain AI. I can <strong>check your balance</strong>, <strong>send ETH</strong>, <strong>look up any address</strong>, or <strong>navigate the app</strong>. Try a command below ↓</div>
+  </div>
+  <div class="ai-suggestions">
+    <span class="ai-sug" onclick="aiQuick('What is my ETH balance?')">My balance</span>
+    <span class="ai-sug" onclick="aiQuick('Show my NFTs')">My NFTs</span>
+    <span class="ai-sug" onclick="aiQuick('What is the current gas price on Base?')">Gas price</span>
+    <span class="ai-sug" onclick="aiQuick('Send 0.01 ETH to 0x...')">Send ETH</span>
+    <span class="ai-sug" onclick="aiQuick('Open leaderboard')">Leaderboard</span>
+  </div>
+  <div class="ai-input-row">
+    <input class="ai-cmd-input" id="ai-cmd-input"
+      placeholder="Ask anything or type a command… (e.g. send 0.01 ETH to 0x1234...)"
+      onkeydown="if(event.key==='Enter')sendAICommand()"/>
+    <button class="ai-send-btn" onclick="sendAICommand()">↑</button>
+  </div>
+</div>
+
+<!-- AI trigger button -->
+<button id="ai-trigger" onclick="toggleAI()" title="Open AI Assistant">
+  <div class="ai-pulse"></div>
+  ✦
+</button>
+
+<!-- ===== MAIN APP ===== -->
+<div id="app">
+  <div id="app-bg">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-streak bg-streak-1"></div>
+    <div class="bg-streak bg-streak-2"></div>
+    <div class="bg-vignette"></div>
+    <div class="bg-top-line"></div>
+  </div>
+
+  <div id="sidebar">
+    <div class="sidebar-logo">W</div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-page="home"><div class="nav-icon">⬡</div><span class="nav-label">Home</span></div>
+      <div class="nav-item" data-page="nfts"><div class="nav-icon">◈</div><span class="nav-label">NFTs</span></div>
+      <div class="nav-item" data-page="deploy"><div class="nav-icon">⬢</div><span class="nav-label">Deploy</span></div>
+      <div class="nav-item" data-page="wallexai"><div class="nav-icon">✦</div><span class="nav-label">WallexAI</span></div>
+    </nav>
+    <div class="sidebar-bottom sidebar-nav">
+      <div class="nav-item" data-page="profile"><div class="nav-icon">◉</div><span class="nav-label">Profile</span></div>
+    </div>
+  </div>
+
+  <div id="main">
+    <div id="pages-container">
+
+      <!-- HOME -->
+      <div id="page-home" class="page active">
+        <div class="hero-row stagger-child">
+          <div class="balance-hero">
+            <div class="balance-kicker">Base Chain Portfolio</div>
+            <div class="balance-label">Total Assets</div>
+            <div class="balance-amount" id="balance-display" style="opacity:0.4;font-size:28px;">Loading...</div>
+            <span class="balance-change positive" id="balance-change" style="visibility:hidden;">▲ +$0.00 (0.00%)</span>
+            <div class="portfolio-meta">
+              <div>
+                <span>Wallet</span>
+                <strong id="home-wallet-address">Not connected</strong>
+              </div>
+              <div>
+                <span>Verified assets</span>
+                <strong id="home-asset-count">0</strong>
+              </div>
+              <div>
+                <span>Base name / ENS</span>
+                <strong id="home-base-name">wallexa.base.eth</strong>
+              </div>
+            </div>
+            <div class="quick-actions">
+              <button class="action-btn" onclick="showToast('📤','Send','Choose recipient address')"><span class="action-btn-icon">↑</span><span class="action-btn-label">Send</span></button>
+              <button class="action-btn" onclick="showToast('📥','Receive','Your address copied!')"><span class="action-btn-icon">↓</span><span class="action-btn-label">Receive</span></button>
+              <button class="action-btn" onclick="navigate('deploy')"><span class="action-btn-icon">⬢</span><span class="action-btn-label">Deploy</span></button>
+            </div>
+            <svg class="asset-rings-svg" width="200" height="200" viewBox="0 0 200 200">
+              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(184,131,122,.1)" stroke-width="1"/>
+              <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(184,131,122,.18)" stroke-width="8" stroke-dasharray="300 472" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+              <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(155,94,85,.2)" stroke-width="6" stroke-dasharray="180 377" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+              <circle cx="100" cy="100" r="45" fill="none" stroke="rgba(122,61,54,.22)" stroke-width="5" stroke-dasharray="100 283" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+            </svg>
+          </div>
+          <div class="glass-card portfolio-card" id="portfolio-overview-card">
+            <div class="xp-card-top">
+              <div>
+                <div class="mini-title">Portfolio Overview</div>
+                <div class="mini-subtitle">Live Base wallet holdings</div>
+              </div>
+              <div class="live-pill">Live</div>
+            </div>
+            <div class="overview-metrics">
+              <div class="overview-metric">
+                <span>Total value</span>
+                <strong id="overview-total-value">$0.00</strong>
+              </div>
+              <div class="overview-metric">
+                <span>24h P/L</span>
+                <strong id="overview-pnl-24h">$0.00</strong>
+              </div>
+            </div>
+            <div class="allocation-head">
+              <span>Asset allocation</span>
+              <span id="allocation-updated">Waiting for wallet</span>
+            </div>
+            <div id="asset-allocation" class="asset-allocation">
+              <div class="allocation-empty">Connect wallet to view allocation.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="glass-card stagger-child" id="token-list">
+            <div style="padding:20px 0;text-align:center;color:rgba(247,240,235,.3);font-size:12px;font-family:'JetBrains Mono',monospace;letter-spacing:.05em;">
+              Connect wallet to load real token holdings...
+            </div>
+          </div>
+
+          <div class="glass-card stagger-child market-card">
+            <div class="market-card-head">
+              <div>
+                <div class="mini-title">Trending Coins</div>
+                <div class="mini-subtitle">Top coins · live price moves</div>
+              </div>
+              <button class="refresh-market-btn" onclick="loadMarketMovers(true)">↻</button>
+            </div>
+            <div id="market-movers-list" class="market-movers-list">
+              <div class="market-loading">Loading CoinMarketCap market data...</div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /home -->
+
+      <!-- NFTs -->
+      <div id="page-nfts" class="page">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;" class="stagger-child">
+          <div class="page-title" style="margin-bottom:0;">NFT Collection</div>
+          <button id="nft-toggle-btn" onclick="toggleNFTGrid()" style="background:rgba(184,131,122,.1);border:1px solid rgba(184,131,122,.2);color:var(--mauve-light);font-size:11px;padding:6px 14px;border-radius:100px;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:.04em;transition:all .2s;">Hide NFTs</button>
+        </div>
+        <div class="page-subtitle stagger-child">12 items across 4 collections</div>
+        <div class="stagger-child" style="margin-bottom:28px;">
+          <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--orange);animation:blink 1.5s infinite;display:inline-block;"></span>Upcoming Mint</div>
+          <div class="mint-card">
+            <div class="mint-art">🌌</div>
+            <div style="flex:1;">
+              <div class="mint-title">Cosmic Genesis Collection</div>
+              <div class="mint-subtitle">10,000 unique generative art pieces on Base chain</div>
+              <div class="countdown">
+                <div class="countdown-unit"><div class="countdown-num" id="cd-h">08</div><div class="countdown-label">Hours</div></div>
+                <div class="countdown-unit"><div class="countdown-num" id="cd-m">23</div><div class="countdown-label">Mins</div></div>
+                <div class="countdown-unit"><div class="countdown-num" id="cd-s">44</div><div class="countdown-label">Secs</div></div>
+              </div>
+              <div class="mint-progress"><div class="mint-progress-fill"></div></div>
+              <div class="mint-progress-label">6,800 / 10,000 minted</div>
+              <button class="mint-btn" onclick="showToast('✨','Mint Initiated','Connecting to smart contract...')">✦ Mint Now — 0.05 ETH</button>
+            </div>
+          </div>
+        </div>
+        <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;margin-bottom:16px;" class="stagger-child">Your Collection</div>
+        <div class="nft-grid stagger-child" id="nft-grid"></div>
+      </div>
+
+      <!-- DEPLOY -->
+      <div id="page-deploy" class="page">
+        <div class="page-title stagger-child">Deploy Contracts</div>
+        <div class="page-subtitle stagger-child">One-click smart contract deployment on Base chain</div>
+        <div class="gas-card stagger-child">
+          <div><div class="gas-label">Current Gas Price</div><div style="font-size:12px;color:rgba(247,240,235,.35);margin-top:2px;font-family:'JetBrains Mono',monospace;">Base chain · Live</div></div>
+          <div style="text-align:right;"><div class="gas-value" id="deploy-gas-value">0.0012 Gwei</div><div style="font-size:11px;color:var(--green);font-family:'JetBrains Mono',monospace;">⬡ Ultra Low</div></div>
+        </div>
+        <div class="deploy-grid stagger-child">
+          <div class="deploy-card base-task" onclick="deployOnBaseTask()"><span class="deploy-icon">⬢</span><div class="deploy-title">Deploy on Base</div><div class="deploy-desc">Deploy the DeployOnBaseTask smart contract from your wallet. No backend key, no server deployer.</div><span class="deploy-chip" style="background:rgba(126,200,164,.12);color:var(--green);">Base Mainnet</span></div>
+          <div class="deploy-card erc20" onclick="showDeployAnim('ERC-20 Token')"><span class="deploy-icon">🪙</span><div class="deploy-title">ERC-20 Token</div><div class="deploy-desc">Launch your own fungible token with custom supply, name, and symbol on Base chain.</div><span class="deploy-chip" style="background:rgba(127,167,232,.12);color:var(--blue);">ERC-20</span></div>
+          <div class="deploy-card nft-contract" onclick="showDeployAnim('NFT Collection')"><span class="deploy-icon">🖼️</span><div class="deploy-title">NFT Collection</div><div class="deploy-desc">Deploy an ERC-721 collection with metadata, royalties, and reveal mechanics.</div><span class="deploy-chip" style="background:rgba(184,131,122,.12);color:var(--mauve-light);">ERC-721</span></div>
+          <div class="deploy-card staking" onclick="showDeployAnim('Staking Contract')"><span class="deploy-icon">⚡</span><div class="deploy-title">Staking Contract</div><div class="deploy-desc">Create yield-generating staking pools with custom lock periods and reward distribution.</div><span class="deploy-chip" style="background:rgba(126,200,164,.12);color:var(--green);">Staking</span></div>
+        </div>
+        <div class="plain-card stagger-child task-panel">
+          <div class="task-panel-head">
+            <div>
+              <div class="mini-title">Verified Tasks</div>
+              <div class="mini-subtitle">Open tasks, verify, and earn instant XP</div>
+            </div>
+            <div class="xp-total small" id="deploy-xp-total">0 XP</div>
+          </div>
+          <div id="task-list"></div>
+        </div>
+        <div class="deploy-anim stagger-child" id="deploy-anim" style="display:none;">
+          <div class="deploy-state-icon" aria-hidden="true">
+            <div class="deploy-spinner-ring"></div>
+            <div class="deploy-checkmark"></div>
+            <div class="deploy-error-mark"></div>
+          </div>
+          <div id="deploy-status" class="deploy-status">Deploying...</div>
+          <div id="deploy-step" class="deploy-step">Compiling smart contract</div>
+          <div class="deploy-progress-track">
+            <div id="deploy-progress" class="deploy-progress-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WALLEXAI PAGE — full chat powered by app.js sendWAICommand -->
+      <div id="page-wallexai" class="page">
+        <div class="page-title stagger-child">WallexAI</div>
+        <div class="page-subtitle stagger-child">Your intelligent Base chain assistant</div>
+
+        <div class="glass-card stagger-child wallexai-chat-shell">
+          <!-- wallet chip -->
+          <div class="wallexai-chat-header">
+            <div class="wallexai-kicker">WallexAI · Base Chain</div>
+            <div id="wai-addr-chip" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mauve-light);background:rgba(184,131,122,.1);border:1px solid rgba(184,131,122,.2);padding:4px 10px;border-radius:20px;">◉ Not connected</div>
+          </div>
+
+          <!-- chat log -->
+          <div id="wai-chat-log" class="wallexai-chat-log">
+            <div class="ai-msg bot" style="max-width:100%;font-size:14px;line-height:1.6;">
+              Hey! I'm WallexAI 🔵 Ask me anything about your wallet, Base chain, NFTs, gas, or tokens. I can also check your balance and help you send ETH.
+            </div>
+          </div>
+
+          <!-- quick suggestions -->
+          <div class="wallexai-suggestions">
+            <span class="ai-sug" onclick="waiQuick('What is my ETH balance?')">My balance</span>
+            <span class="ai-sug" onclick="waiQuick('Current gas price on Base')">Gas price</span>
+            <span class="ai-sug" onclick="waiQuick('Show my NFTs')">My NFTs</span>
+            <span class="ai-sug" onclick="waiQuick('Open leaderboard')">Leaderboard</span>
+            <span class="ai-sug" onclick="waiQuick('What is Base chain?')">What is Base?</span>
+          </div>
+
+          <!-- input -->
+          <div class="wallexai-input-row">
+            <input id="wai-input" class="ai-cmd-input"
+              placeholder="Ask WallexAI anything…"
+              onkeydown="if(event.key==='Enter')sendWAICommand()"
+              style="flex:1;"/>
+            <button class="ai-send-btn" onclick="sendWAICommand()">↑</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div id="page-profile" class="page">
+        <div class="page-title stagger-child">Profile</div>
+        <div class="page-subtitle stagger-child">Your WALLEXA identity and achievements</div>
+        <div class="profile-hero stagger-child">
+          <div class="profile-avatar">🦁</div>
+          <div style="flex:1;">
+            <div class="profile-ens">wallexa.base.eth</div>
+            <div class="profile-addr" id="profile-addr-display">Connect wallet · Base Chain</div>
+            <div class="badge-row" id="profile-badges">
+              <span class="badge">Starter</span>
+            </div>
+            <div class="xp-bar-wrap" style="margin-top:12px;max-width:360px;">
+              <div class="xp-label"><span id="profile-tier-label">Next: Bronze</span><span id="profile-tier-progress">0 / 1000 XP</span></div>
+              <div class="xp-bar"><div class="xp-fill" id="profile-xp-fill" style="width:0%;"></div></div>
+            </div>
+          </div>
+          <div class="profile-points">
+            <div class="profile-points-value" id="profile-xp-total">0</div>
+            <div class="profile-points-label">XP Earned</div>
+            <button class="leaderboard-btn" onclick="openLeaderboard()">Leaderboard</button>
+            <button onclick="disconnectWallet()" style="margin-top:10px;width:100%;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,80,80,0.3);background:rgba(255,80,80,0.08);color:#ff6b6b;font-family:Syne,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">⏻ Disconnect Wallet</button>
+          </div>
+        </div>
+        <div class="plain-card stagger-child profile-summary">
+          <div class="mini-title">Rank Progress</div>
+          <div class="tier-grid">
+            <div><strong>Bronze</strong><span>1000 XP</span></div>
+            <div><strong>Platinum</strong><span>3000 XP</span></div>
+            <div><strong>Diamond</strong><span>5000 XP</span></div>
+            <div><strong>OG</strong><span>Diamond earned</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /pages-container -->
+  </div><!-- /main -->
+
+  <div id="mobile-nav">
+    <div class="mob-nav-item active" data-page="home"><span>⬡</span><span class="mob-nav-label">Home</span></div>
+    <div class="mob-nav-item" data-page="nfts"><span>◈</span><span class="mob-nav-label">NFTs</span></div>
+    <div class="mob-nav-item" data-page="deploy"><span>⬢</span><span class="mob-nav-label">Deploy</span></div>
+    <div class="mob-nav-item" data-page="wallexai"><span>✦</span><span class="mob-nav-label">AI</span></div>
+    <div class="mob-nav-item" data-page="profile"><span>◉</span><span class="mob-nav-label">Profile</span></div>
+  </div>
+</div><!-- /app -->
+
+<!-- Leaderboard Modal -->
+<div id="leaderboard-modal" class="leaderboard-modal" aria-hidden="true">
+  <div class="leaderboard-card">
+    <div class="leaderboard-head">
+      <div>
+        <div class="mini-title">Leaderboard</div>
+        <div class="mini-subtitle">Ranked by WALLEXA XP</div>
+      </div>
+      <button class="leaderboard-close" onclick="closeLeaderboard()">✕</button>
+    </div>
+    <div id="leaderboard-list" class="leaderboard-list"></div>
+  </div>
+</div>
+
+<!-- =====================================================
+  SCRIPTS — plain (no type="module") so globals work.
+  Order matters: dependencies before app.js
+====================================================== -->
+<script src="addresses.js"></script>
+<script src="abis.js"></script>
+<script src="alchemy.js?v=20260604-all-base-holdings"></script>
+<script src="walletconnect.js?v=20260604-trust-bitget"></script>
+<script src="parser.js"></script>
+<script src="webcam-pixel-grid.js"></script>
+<script src="basemcp.js?v=20260604-ens-send-any-evm"></script>  <!-- Base MCP: swap/send via mcp.base.org -->
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.15.0/dist/ethers.umd.min.js"></script>
+<script src="app.js?v=20260604-deploy-on-base-task"></script>
+<script>
+// ── Webcam Pixel Grid on connect screen ──────────────────────────────────────
+document.addEventListener("DOMContentLoaded", function () {
+  const bg = document.getElementById("connect-pixel-bg");
+  if (!bg || typeof WebcamPixelGrid === "undefined") return;
+
+  const grid = new WebcamPixelGrid(bg, {
+    gridCols: 30,
+    gridRows: 20,
+    maxElevation: 64,
+    motionSensitivity: 0.25,
+    elevationSmoothing: 0.2,
+    colorMode: "webcam",      // switches to "mono" warmth if no camera
+    backgroundColor: "#030303",
+    mirror: true,
+    gapRatio: 0.08,
+    invertColors: false,
+    darken: 0.6,
+    borderColor: "#ffffff",
+    borderOpacity: 0.06,
+    onWebcamReady: () => console.log("WALLEXA: webcam pixel grid ready"),
+    onWebcamError: (err) => {
+      console.warn("WALLEXA: webcam unavailable, using noise animation", err);
+      // fallback: switch to warm mono animated noise (already handled internally)
+    },
+  });
+
+  // Pause the grid when the connect screen is hidden (saves GPU)
+  const observer = new MutationObserver(() => {
+    const hidden = document.getElementById("connect-screen")?.style?.display === "none";
+    if (hidden) {
+      grid.destroy();
+    }
+  });
+  const cs = document.getElementById("connect-screen");
+  if (cs) observer.observe(cs, { attributes: true, attributeFilter: ["style"] });
+});
+</script>
+
+</body>
+</html>

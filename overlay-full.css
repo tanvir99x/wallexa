@@ -1,0 +1,514 @@
+/* ========== WALLEXA AI — FULL CHATGPT‑STYLE CSS (CHUNK 1 / 4) ========== */
+/* Base Reset, Layout Foundation, Overlay Root, Scrollbars, Grid Structure */
+/* Safe chunk size keeps context stable. Next chunks will layer on top. */
+
+/* RESET */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: "DM Sans", sans-serif;
+  background: transparent;
+}
+
+/* SMOOTH SCROLLING */
+body {
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+/* CUSTOM SCROLLBARS */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.14);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.22);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ===== OVERLAY ROOT ===== */
+#walletxa-chat-overlay,
+#wallexa-chat-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  background: transparent;
+  backdrop-filter: none;
+  pointer-events: auto;
+  color: #f3efe8;
+}
+
+/* FLEX LAYOUT */
+.wxa-overlay-root {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  overflow: hidden;
+}
+
+/* ===== COMMON UTILITY CLASSES ===== */
+.wxa-hidden {
+  display: none !important;
+}
+
+.wxa-flex {
+  display: flex;
+  align-items: center;
+}
+
+.wxa-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== SAFE BASE TYPOGRAPHY ===== */
+.wxa-overlay-root, 
+.wxa-overlay-root select,
+.wxa-overlay-root button,
+.wxa-overlay-root textarea {
+  font-family: "DM Sans", sans-serif;
+  color: #f5f1ea;
+}
+
+/* ===== BUTTON RESET ===== */
+.wxa-overlay-root button {
+  border: none;
+  cursor: pointer;
+  background: none;
+  color: inherit;
+}
+
+/* ===== SIDEBAR BASE (detailed styling comes in chunk 2) ===== */
+.wxa-sidebar {
+  width: 260px;
+  background: rgba(3, 3, 3, 0.76);
+  border-right: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px;
+  overflow-y: auto;
+}
+
+/* ===== MAIN CHAT AREA BASE ===== */
+.wxa-chat-main {
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  overflow: hidden;
+}
+
+/* Header Base */
+.wxa-chat-header {
+  height: 60px;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Model Selector */
+.wxa-model-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wxa-model-select select {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: #fff;
+}
+
+/* Chat Content Base */
+.wxa-chat-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Input Footer Base */
+.wxa-input-footer {
+  padding: 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  gap: 12px;
+  background: transparent;
+}
+
+/* Input Box */
+.wxa-input {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 12px 14px;
+  border-radius: 12px;
+  resize: none;
+  min-height: 48px;
+  max-height: 160px;
+}
+
+/* Send Button */
+.wxa-send-btn {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #b8837a, #7f524a);
+  border-radius: 14px;
+  font-size: 18px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Message Base */
+.wxa-message {
+  display: flex;
+  gap: 14px;
+  max-width: 80%;
+  line-height: 1.55;
+}
+
+/* Avatar */
+.wxa-message-avatar {
+  width: 30px;
+  height: 30px;
+  background: rgba(255,255,255,0.13);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* Message Bubble */
+.wxa-message-bubble {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* User vs Bot */
+.wxa-message.user {
+  margin-left: auto;
+}
+.wxa-message.user .wxa-message-bubble {
+  background: linear-gradient(135deg, #7f524a, #b8837a);
+  border-color: rgba(255,255,255,0.15);
+}
+
+/* ========== WALLEXA AI — FULL CHATGPT‑STYLE CSS (CHUNK 2 / 4) ========== */
+/* Sidebar visual styles, hover effects, chat list items, section labels */
+
+.wxa-sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.wxa-sidebar-logo {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #f7f3ec;
+}
+
+.wxa-new-chat-btn {
+  background: rgba(255,255,255,0.08);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  transition: background 0.15s;
+}
+
+.wxa-new-chat-btn:hover {
+  background: rgba(255,255,255,0.14);
+}
+
+.wxa-sidebar-section-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.32);
+  margin-bottom: 10px;
+}
+
+.wxa-chat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wxa-chat-item {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.wxa-chat-item:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.wxa-chat-item-active {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.22);
+}
+
+.wxa-sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.wxa-sidebar-item {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.wxa-sidebar-item:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.12);
+}
+
+/* ========== WALLEXA AI — FULL CHATGPT‑STYLE CSS (CHUNK 3 / 4) ========== */
+/* Chat Window: markdown, code blocks, tables, streaming animations, typing dots */
+
+/* MESSAGE GROUPING */
+.wxa-message-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* BOT MESSAGE ENHANCEMENTS */
+.wxa-message-bubble pre,
+.wxa-message-bubble code {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  background: rgba(0,0,0,0.28);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #e9e4dc;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* INLINE CODE */
+.wxa-message-bubble code {
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.12);
+}
+
+/* BLOCK CODE */
+.wxa-message-bubble pre {
+  overflow-x: auto;
+  margin-top: 6px;
+}
+
+/* TABLES */
+.wxa-message-bubble table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+}
+.wxa-message-bubble th,
+.wxa-message-bubble td {
+  padding: 8px 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.wxa-message-bubble th {
+  background: rgba(255,255,255,0.10);
+  font-weight: 600;
+}
+
+/* LISTS */
+.wxa-message-bubble ul,
+.wxa-message-bubble ol {
+  margin-left: 18px;
+  padding-left: 8px;
+}
+.wxa-message-bubble ul li {
+  list-style: disc;
+}
+.wxa-message-bubble ol li {
+  list-style: decimal;
+}
+
+/* LINKS */
+.wxa-message-bubble a {
+  color: #8fbaff;
+  text-decoration: underline;
+}
+
+/* CITATIONS */
+.wxa-citation {
+  font-size: 11px;
+  opacity: 0.6;
+  margin-top: 6px;
+}
+
+/* STREAMING CURSOR (AI typing style) */
+.wxa-stream-cursor {
+  display: inline-block;
+  width: 6px;
+  height: 14px;
+  background: rgba(255,255,255,0.85);
+  margin-left: 4px;
+  animation: wxaBlink 1s infinite;
+}
+
+@keyframes wxaBlink {
+  0%, 50% { opacity: 1; }
+  50.1%, 100% { opacity: 0; }
+}
+
+/* TYPING INDICATOR (three dots) */
+.wxa-typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  width: fit-content;
+}
+.wxa-typing-dot {
+  width: 6px;
+  height: 6px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 50%;
+  animation: wxaTyping 1.4s infinite ease-in-out;
+}
+.wxa-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.wxa-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes wxaTyping {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* MESSAGE WIDTH LIMITS FOR LARGE MONITORS */
+@media (min-width: 1400px) {
+  .wxa-message {
+    max-width: 60%;
+  }
+}
+
+/* ========== WALLEXA AI — FULL CHATGPT‑STYLE CSS (CHUNK 4 / 4) ========== */
+/* Animations, overlays, fade‑in, slide‑in, message reveal, scrollbar polish */
+
+/* FADE‑IN ANIMATION FOR NEW MESSAGES */
+.wxa-fade-in {
+  opacity: 0;
+  animation: wxaFadeIn 0.35s ease forwards;
+}
+
+@keyframes wxaFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* SLIDE‑UP ANIMATION (ChatGPT style) */
+.wxa-slide-up {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: wxaSlideUp 0.38s cubic-bezier(0.21, 0.56, 0.24, 0.99) forwards;
+}
+
+@keyframes wxaSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* CHAT WINDOW GLOW EFFECT */
+.wxa-chat-content {
+  scrollbar-color: rgba(255,255,255,0.18) transparent;
+}
+
+.wxa-chat-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(255,255,255,0.25), rgba(255,255,255,0.05));
+}
+
+/* MESSAGE HOVER GLOW */
+.wxa-message-bubble:hover {
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.22);
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+/* INPUT FOOTER SHADOW */
+.wxa-input-footer {
+  box-shadow: none;
+}
+
+/* SEND BUTTON HOVER */
+.wxa-send-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+/* SCROLL ANCHOR ANIMATION (scroll-to-bottom pulse) */
+.wxa-scroll-pulse {
+  animation: wxaPulse 1.3s infinite;
+}
+
+@keyframes wxaPulse {
+  0% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.12); }
+  100% { opacity: 0.5; transform: scale(1); }
+}
+
+/* OVERLAY CLOSE BUTTON (for future JS) */
+.wxa-close-overlay {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.18s;
+}
+
+.wxa-close-overlay:hover {
+  background: rgba(255,255,255,0.14);
+}

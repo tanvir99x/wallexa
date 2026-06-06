@@ -1,0 +1,15 @@
+{
+  "name": "wallexai-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for WALLEXAI",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.3.0",
+    "dotenv": "^16.0.0",
+    "openai": "^6.39.1"
+  }
+}
