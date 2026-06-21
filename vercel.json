@@ -1,34 +1,28 @@
 {
   "version": 2,
-  "outputDirectory": ".",
-  "routes": [
+  "builds": [
     {
-      "src": "/styles.css",
-      "dest": "/styles.css"
+      "src": "index.html",
+      "use": "@vercel/static"
     },
     {
-      "src": "/overlay.css",
-      "dest": "/overlay.css"
+      "src": "*.css",
+      "use": "@vercel/static"
     },
     {
-      "src": "/overlay-full.css",
-      "dest": "/overlay-full.css"
+      "src": "*.js",
+      "use": "@vercel/static"
     },
     {
-      "src": "/webcam-pixel-grid.css",
-      "dest": "/webcam-pixel-grid.css"
+      "src": "vendor/**",
+      "use": "@vercel/static"
     },
     {
-      "src": "/(.*\\.js)",
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*\\.css)",
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "src": "wallexAi/**",
+      "use": "@vercel/static"
     }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
